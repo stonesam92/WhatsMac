@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>38685CDB-ADC9-4E36-A357-FE5FD0C35D24</string>
+	<key>IDESourceControlProjectName</key>
+	<string>WhatsMac</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C6D3C457A76B3768CDD8C643FE767BFD714600BD</key>
+		<string>https://github.com/francocorreasosa/WhatsMac</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>WhatsMac.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C6D3C457A76B3768CDD8C643FE767BFD714600BD</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/francocorreasosa/WhatsMac</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C6D3C457A76B3768CDD8C643FE767BFD714600BD</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C6D3C457A76B3768CDD8C643FE767BFD714600BD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>WhatsMac</string>
+		</dict>
+	</array>
+</dict>
+</plist>

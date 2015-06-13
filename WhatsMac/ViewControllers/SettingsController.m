@@ -15,7 +15,6 @@
 
 @property (nonatomic, strong) SettingsStore *settingsStore;
 @property (weak) IBOutlet NSButton *notificationBadgeButton;
-@property (weak) IBOutlet NSButton *desktopNotificationButton;
 @property (weak) IBOutlet NSPopUpButton *updateFrequencyPopUpButton;
 @property (weak) IBOutlet NSButton *checkUpdateButton;
 @property (weak) IBOutlet NSTextField *currentVersionTextField;
@@ -47,7 +46,6 @@
 
     // Update UI based on settingsStore values
     _notificationBadgeButton.state = _settingsStore.notificationBadge;
-    _desktopNotificationButton.state = _settingsStore.desktopNotification;
     switch (_settingsStore.updateFrequency) {
         case UpdateFrequencyAtLaunch:
             _updateFrequencyPopUpButton.state = 0;
@@ -80,13 +78,6 @@
     else {
         AppDelegate *appDelegate = (AppDelegate *)[NSApplication sharedApplication].delegate;
         [[NSApp dockTile] setBadgeLabel: appDelegate.notificationCount];
-    }
-}
-
-- (IBAction)desktopNotificationButtonSelector:(id)sender {
-    _settingsStore.desktopNotification = (_desktopNotificationButton.state == 1);
-    if (_desktopNotificationButton.state == 0) {
-        [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
     }
 }
 

@@ -21,7 +21,6 @@ typedef NS_ENUM (NSInteger, UpdateFrequency) {
 };
 
 @property (assign, nonatomic) BOOL notificationBadge;
-@property (assign, nonatomic) BOOL desktopNotification;
 @property (assign, nonatomic) UpdateFrequency updateFrequency;
 
 + (instancetype)sharedInstance;

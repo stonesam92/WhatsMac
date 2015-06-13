@@ -250,13 +250,11 @@
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
-    if (self.settingsStore.desktopNotification) {
-        NSArray *messageBody = message.body;
-        NSUserNotification *notification = [NSUserNotification new];
-        notification.title = messageBody[0];
-        notification.subtitle = messageBody[1];
-        [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
-    }
+    NSArray *messageBody = message.body;
+    NSUserNotification *notification = [NSUserNotification new];
+    notification.title = messageBody[0];
+    notification.subtitle = messageBody[1];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler {

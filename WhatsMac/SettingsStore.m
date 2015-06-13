@@ -9,7 +9,6 @@
 
 typedef NS_ENUM (NSInteger, UserDefaultKey) {
     UserDefaultKeyNotificationBadge = 1,
-    UserDefaultKeyDesktopNotification,
     UserDefaultKeyUpdateFrequency,
 };
 
@@ -20,7 +19,6 @@ typedef NS_ENUM (NSInteger, UserDefaultKey) {
 @implementation SettingsStore
 
 @synthesize notificationBadge = _notificationBadge;
-@synthesize desktopNotification = _desktopNotification;
 @synthesize updateFrequency = _updateFrequency;
 
 #pragma mark - Initialization
@@ -29,7 +27,6 @@ typedef NS_ENUM (NSInteger, UserDefaultKey) {
     // Provide some default values
     NSDictionary *appDefaults = @{
                                   [SettingsStore stringForUserDefaultKey:UserDefaultKeyNotificationBadge]: @YES,
-                                  [SettingsStore stringForUserDefaultKey:UserDefaultKeyDesktopNotification]: @YES,
                                   [SettingsStore stringForUserDefaultKey:UserDefaultKeyUpdateFrequency]: @(UpdateFrequencyAtLaunch),
                                   };
 
@@ -57,16 +54,6 @@ typedef NS_ENUM (NSInteger, UserDefaultKey) {
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (BOOL)desktopNotification {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:[SettingsStore stringForUserDefaultKey:UserDefaultKeyDesktopNotification]] boolValue];
-}
-
-- (void)setDesktopNotification:(BOOL)desktopNotification {
-    _desktopNotification = desktopNotification;
-    [[NSUserDefaults standardUserDefaults] setObject:@(desktopNotification) forKey:[SettingsStore stringForUserDefaultKey:UserDefaultKeyDesktopNotification]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
 - (UpdateFrequency)updateFrequency {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:[SettingsStore stringForUserDefaultKey:UserDefaultKeyUpdateFrequency]] integerValue];
 }
@@ -85,9 +72,6 @@ typedef NS_ENUM (NSInteger, UserDefaultKey) {
     switch(userDefaultKey) {
         case UserDefaultKeyNotificationBadge:
             result = @"UserDefaultKeyNotificationBadge";
-            break;
-        case UserDefaultKeyDesktopNotification:
-            result = @"UserDefaultKeyDesktopNotification";
             break;
         case UserDefaultKeyUpdateFrequency:
             result = @"UserDefaultKeyUpdateFrequency";

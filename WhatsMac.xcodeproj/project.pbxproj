@@ -20,6 +20,10 @@
 		22D3AC7D1B0D57A3005FCA4B /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22D3AC7A1B0D574D005FCA4B /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22D3AC7F1B0D58C3005FCA4B /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */; };
 		22FD6F861B18DE3A001B593D /* jquery.js in Resources */ = {isa = PBXBuildFile; fileRef = 22FD6F851B18DE3A001B593D /* jquery.js */; };
+		7773A1BD1B1B115700DCCCD8 /* Settings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7773A1BA1B1B115700DCCCD8 /* Settings.xib */; };
+		7773A1BE1B1B115700DCCCD8 /* SettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7773A1BC1B1B115700DCCCD8 /* SettingsController.m */; };
+		7773A1C21B1B182A00DCCCD8 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 7773A1C11B1B182A00DCCCD8 /* SettingsStore.m */; };
+		7773A1C51B1B262700DCCCD8 /* ServiceContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7773A1C41B1B262700DCCCD8 /* ServiceContainer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,6 +58,13 @@
 		22D3AC7A1B0D574D005FCA4B /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		22FD6F851B18DE3A001B593D /* jquery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.js; sourceTree = "<group>"; };
+		7773A1BA1B1B115700DCCCD8 /* Settings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Settings.xib; sourceTree = "<group>"; };
+		7773A1BB1B1B115700DCCCD8 /* SettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsController.h; sourceTree = "<group>"; };
+		7773A1BC1B1B115700DCCCD8 /* SettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsController.m; sourceTree = "<group>"; };
+		7773A1C01B1B182A00DCCCD8 /* SettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsStore.h; sourceTree = "<group>"; };
+		7773A1C11B1B182A00DCCCD8 /* SettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsStore.m; sourceTree = "<group>"; };
+		7773A1C31B1B262700DCCCD8 /* ServiceContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceContainer.h; sourceTree = "<group>"; };
+		7773A1C41B1B262700DCCCD8 /* ServiceContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceContainer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +100,7 @@
 		223C31971B07B66500E09138 /* WhatsMac */ = {
 			isa = PBXGroup;
 			children = (
+				7773A1B91B1B115700DCCCD8 /* ViewControllers */,
 				22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */,
 				2262F0DD1B0A9BD900186F1D /* inject.js */,
 				22FD6F851B18DE3A001B593D /* jquery.js */,
@@ -97,6 +109,10 @@
 				223C319B1B07B66500E09138 /* AppDelegate.m */,
 				2262F0DF1B0B842F00186F1D /* WAMApplication.h */,
 				2262F0E01B0B842F00186F1D /* WAMApplication.m */,
+				7773A1C01B1B182A00DCCCD8 /* SettingsStore.h */,
+				7773A1C11B1B182A00DCCCD8 /* SettingsStore.m */,
+				7773A1C31B1B262700DCCCD8 /* ServiceContainer.h */,
+				7773A1C41B1B262700DCCCD8 /* ServiceContainer.m */,
 				2262F0E21B0BF4C200186F1D /* WAMWebView.h */,
 				2262F0E31B0BF4C200186F1D /* WAMWebView.m */,
 				223C31BF1B0819DB00E09138 /* WKWebView+Private.h */,
@@ -123,6 +139,16 @@
 				2262F0D61B0966F000186F1D /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7773A1B91B1B115700DCCCD8 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				7773A1BA1B1B115700DCCCD8 /* Settings.xib */,
+				7773A1BB1B1B115700DCCCD8 /* SettingsController.h */,
+				7773A1BC1B1B115700DCCCD8 /* SettingsController.m */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -186,6 +212,7 @@
 				223C31A31B07B66500E09138 /* Images.xcassets in Resources */,
 				22D3AC7F1B0D58C3005FCA4B /* dsa_pub.pem in Resources */,
 				223C31BE1B08167D00E09138 /* MainMenu.xib in Resources */,
+				7773A1BD1B1B115700DCCCD8 /* Settings.xib in Resources */,
 				2262F0DE1B0A9BD900186F1D /* inject.js in Resources */,
 				22FD6F861B18DE3A001B593D /* jquery.js in Resources */,
 				226C98E61B0F564100515A14 /* noConnection.html in Resources */,
@@ -199,6 +226,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7773A1C21B1B182A00DCCCD8 /* SettingsStore.m in Sources */,
+				7773A1C51B1B262700DCCCD8 /* ServiceContainer.m in Sources */,
+				7773A1BE1B1B115700DCCCD8 /* SettingsController.m in Sources */,
 				2262F0E11B0B842F00186F1D /* WAMApplication.m in Sources */,
 				2262F0E41B0BF4C200186F1D /* WAMWebView.m in Sources */,
 				223C319E1B07B66500E09138 /* main.m in Sources */,

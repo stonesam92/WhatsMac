@@ -164,6 +164,10 @@
     [self.faq makeKeyAndOrderFront:self];
 }
 
+- (IBAction)submitIssue:(id)sender {
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/stonesam92/ChitChat/issues"]];
+}
+
 - (IBAction)reloadPage:(id)sender {
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://web.whatsapp.com"]];
     [self.webView loadRequest:urlRequest];

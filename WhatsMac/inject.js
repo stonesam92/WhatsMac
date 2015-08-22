@@ -14,15 +14,31 @@ this.Notification.requestPermission = function(callback) {callback('granted');};
 
 
 var styleAdditions = document.createElement('style');
-styleAdditions.textContent = 'div.pane-list-user {opacity:0;} \
+styleAdditions.textContent = 'div.pane-list-user { opacity:0; } \
 div.pane-list-user > div.avatar { width: 0px; height: 0px; } \
-div.app-wrapper::before {opacity: 0;} \
-div.drawer-title {left:60px; bottom:17px;} \
+div.app-wrapper::before { opacity: 0; } \
+div.drawer-title { left:60px; bottom:17px; } \
 div.chat.media-chat > div.chat-avatar { opacity: 0;} \
-div.app.two { top: 0px; width: 100%; height: 100%; } \
-div.app.three { top: 0px; width: 100%; height: 100%; } \
-div.pane.pane-chat { width : 100%; } \
-div.pane.pane-intro { width : 100%; } \
+div.app.three, div.app.two { top: 0px; width: 100%; height: 100%; } \
+@media screen and (max-width:1024px) { \
+    .pane-list, .drawer-container-left { width: 38%; } \
+    .drawer-container-mid, .drawer-container-right, .pane-chat, .pane-intro, .pane-info, .drawer-container-panel { width: 62%; } \
+} \
+@media screen and (min-width:1024px) and (max-width:1199px) { \
+    .pane-list, .drawer-container-left, .pane-info, .drawer-container-panel { width: 30%; } \
+    .drawer-container-mid, .drawer-container-right, .pane-chat, .pane-intro { width: 70%; } \
+    .three .drawer-container-mid, .three .drawer-container-right, .three .pane-chat, .three .pane-intro { width: 40%; } \
+} \
+@media screen and (min-width:1200px) { \
+    .pane-list, .drawer-container-left, .pane-info, .drawer-container-panel { width: 359px; } \
+    .drawer-container-mid, .drawer-container-right, .pane-chat, .pane-intro { width: calc(100% - 359px); } \
+    .three .drawer-container-mid, .three .drawer-container-right, .three .pane-chat, .three .pane-intro { width: calc(100% - 718px); } \
+}\
+@media screen and (min-width:1320px) {\
+    .pane-list, .drawer-container-left, .pane-info, .drawer-container-panel { width: 388px; } \
+    .drawer-container-mid, .drawer-container-right, .pane-chat, .pane-intro { width: calc(100% - 388px); } \
+    .three .drawer-container-mid, .three .drawer-container-right, .three .pane-chat, .three .pane-intro { width: calc(100% - 718px); } \
+}\
 ';
 document.documentElement.appendChild(styleAdditions);
 
@@ -61,8 +77,19 @@ function clickOnItemWithIndex (index, scrollToItem) {
                 var desiredItem = $this.get(0);
                 desiredItem.firstChild.click();
                 if (scrollToItem) {
-                    var scrollPos = offsetOfListItem($(desiredItem));
-                    $('.pane-list-body')[0].scrollTop = scrollPos;
+					$scrollView = $('.pane-list-body');
+					$desiredItem = $(desiredItem);
+					
+					// Check whether the desired item is not inside the viewport (below)
+					if ($desiredItem.position().top + CHAT_ITEM_HEIGHT > $scrollView.scrollTop() + $scrollView.height()) {
+	                    var scrollPos = $desiredItem.position().top - $scrollView.height() + CHAT_ITEM_HEIGHT;
+	                    $scrollView.stop().animate({scrollTop: scrollPos}, 150);
+					}
+					// Check whether the desired item is not inside the viewport (above)
+					else if ($desiredItem.position().top < $scrollView.scrollTop()) {
+	                    var scrollPos = $desiredItem.position().top;
+	                    $scrollView.stop().animate({scrollTop: scrollPos}, 150);
+					}					
                 }
                 return false;
         }
@@ -112,6 +139,7 @@ jQuery(function () {
             var isInputFieldEmpty = $input.contents().length === 0 ||
                                     $input.contents()[0].nodeName === 'BR';
             if (direction && isInputFieldEmpty) {
+                event.preventDefault();
                 var $selectedItem = null;
                 var $infiniteListItems = $('.infinite-list-viewport .infinite-list-item');
                 $.each($infiniteListItems, function () {

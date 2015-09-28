@@ -1,67 +1,38 @@
 #import "AppDelegate.h"
-#import "WKWebView+Private.h"
-#import "WAMWebView.h"
+#import "WAMWebViewController.h"
 
 @import WebKit;
 @import Sparkle;
+@import AppKit;
 
-@interface AppDelegate () <NSWindowDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler>
+NSUInteger const WAMWindowToolbarHeight = 38;
+
+@interface AppDelegate () <NSWindowDelegate, NSUserNotificationCenterDelegate>
 @property (strong, nonatomic) NSWindow *window;
-@property (strong, nonatomic) WKWebView *webView;
+@property (strong, nonatomic) WAMWebViewController *webViewController;
+@property (strong, nonatomic) NSString *notificationCount;
 @property (strong, nonatomic) NSView* titlebarView;
 @property (strong, nonatomic) NSStatusItem *statusItem;
 @property (weak, nonatomic) NSWindow *legal;
 @property (weak, nonatomic) NSWindow *faq;
-@property (strong, nonatomic) NSString *notificationCount;
 @end
 
 @implementation AppDelegate
 
-- (WKWebViewConfiguration*)webViewConfig {
-    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
-    WKUserContentController *contentController = [[WKUserContentController alloc] init];
-    // inject js into webview
-    NSURL *pathToJS = [[NSBundle mainBundle] URLForResource:@"inject" withExtension:@"js"];
-    NSString *injectedJS = [NSString stringWithContentsOfURL:pathToJS encoding:NSUTF8StringEncoding error:nil];
-    WKUserScript *userScript = [[WKUserScript alloc] initWithSource:injectedJS
-                                                      injectionTime:WKUserScriptInjectionTimeAtDocumentEnd
-                                                   forMainFrameOnly:NO];
-    NSURL *jqueryURL = [[NSBundle mainBundle] URLForResource:@"jquery" withExtension:@"js"];
-    NSString *jquery = [NSString stringWithContentsOfURL:jqueryURL encoding:NSUTF8StringEncoding error:nil];
-    WKUserScript *jqueryUserScript = [[WKUserScript alloc] initWithSource:jquery
-                                                            injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:NO];
-    [contentController addUserScript:jqueryUserScript];
-    [contentController addUserScript:userScript];
-    [contentController addScriptMessageHandler:self name:@"notification"];
-    config.userContentController = contentController;
-    
-    #if DEBUG
-    [config.preferences setValue:@YES forKey:@"developerExtrasEnabled"];
-    #else
-    WKUserScript *noRightClickJS = [[WKUserScript alloc] initWithSource:
-                                    @"document.addEventListener('contextmenu',"
-                                    "function(event) {"
-                                        "event.preventDefault();"
-                                    "});"
-                                                          injectionTime:WKUserScriptInjectionTimeAtDocumentStart
-                                                       forMainFrameOnly:NO];
-    [contentController addUserScript:noRightClickJS];
-    #endif
-    return config;
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     NSInteger windowStyleFlags = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
     _notificationCount = @"";
+
     _window = [[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 800, 600)
                                           styleMask:windowStyleFlags
                                             backing:NSBackingStoreBuffered
                                               defer:YES];
     _window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantLight];
+    _window.backgroundColor = [NSColor colorWithRed:0.933 green:0.933 blue:0.933 alpha:1.0];
     _window.titleVisibility = NSWindowTitleHidden;
     _window.titlebarAppearsTransparent = YES;
-    _window.minSize = CGSizeMake(640, 400);
     _window.releasedWhenClosed = NO;
+    _window.minSize = CGSizeMake(600, 400);
     _window.delegate = self;
     _window.frameAutosaveName = @"main";
     _window.movableByWindowBackground = YES;
@@ -70,23 +41,21 @@
     
     _titlebarView = [_window standardWindowButton:NSWindowCloseButton].superview;
     [self updateWindowTitlebar];
-    
-    [self createStatusItem];
+  
+    _webViewController = [[WAMWebViewController alloc] initWithNibName:nil bundle:nil];
 
-    _webView = [[WAMWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)
-                                  configuration:[self webViewConfig]];
-    
-    _window.contentView = _webView;
-    _webView.UIDelegate = self;
-    _webView.navigationDelegate = self;
-    [_webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:NULL];
-    
-    //Whatsapp web only works with specific user agents
-    _webView._customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12";
-    
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://web.whatsapp.com"]];
-    [_webView loadRequest:urlRequest];
+    // NSWindow.contentViewController has undocumented side effects.
+    // So NSWindow.contentView is used intead.
+    _window.contentView = _webViewController.view;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setNotificationCount:) name:WAMWebViewUpdateUnreadCountNotification object:_webViewController];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postNativeNotification:) name:WAMWebViewNewMessageNotification object:_webViewController];
+  
+    [self createStatusItem];
+  
     [_window makeKeyAndOrderFront:self];
+    
+    [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
     
     [[SUUpdater sharedUpdater] checkForUpdatesInBackground];
 }
@@ -121,24 +90,6 @@
     [self updateWindowTitlebar];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    NSString *title = change[NSKeyValueChangeNewKey];
-    if ([title isEqualToString:@"WhatsApp Web"]) {
-        self.notificationCount = @"";
-    } else {
-        NSRegularExpression* regex =
-        [NSRegularExpression regularExpressionWithPattern:@"\\(([0-9]+)\\) WhatsApp Web"
-                                                  options:0
-                                                    error:nil];
-        NSTextCheckingResult* match = [regex firstMatchInString:title
-                                                        options:0
-                                                          range:NSMakeRange(0, title.length)];
-        if (match) {
-            self.notificationCount = [title substringWithRange:[match rangeAtIndex:1]];
-        }
-    }
-}
-
 - (NSWindow*)legal {
     if (!_legal) {
         _legal = [self createWindow:@"legal" title:@"Legal" URL:@"https://www.whatsapp.com/legal/"];
@@ -153,7 +104,8 @@
     return _faq;
 }
 
-- (void)setNotificationCount:(NSString *)notificationCount {
+- (void)setNotificationCount:(NSNotification *)notification {
+    NSString* notificationCount = [notification.userInfo valueForKey:@"count"];
     if (![_notificationCount isEqualToString:notificationCount]) {
         [[NSApp dockTile] setBadgeLabel:notificationCount];
         
@@ -164,20 +116,31 @@
         }
         else {
             [self.statusItem.button setImage:[NSImage imageNamed:@"statusIconRead"]];
+            [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
         }
     }
     _notificationCount = notificationCount;
 }
 
+- (void)postNativeNotification:(NSNotification *)notificaiton {
+    NSUserNotification *notification = [NSUserNotification new];
+    notification.title = [notificaiton.userInfo valueForKey:@"title"];
+    notification.subtitle = [notificaiton.userInfo valueForKey:@"subtitle"];
+    notification.identifier = [notificaiton.userInfo valueForKey:@"tag"];
+    [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
+}
+
 #pragma mark MenuBar Actions
 - (IBAction)find:(NSMenuItem*)sender {
-    [self.webView evaluateJavaScript:@"activateSearchField();"
-                   completionHandler:nil];
+    [self.webViewController find];
 }
 
 - (IBAction)newConversation:(NSMenuItem*)sender {
-    [self.webView evaluateJavaScript:@"newConversation();"
-                   completionHandler:nil];
+    [self.webViewController newConversation];
+}
+
+- (IBAction)reloadPage:(id)sender {
+  [self.webViewController reload];
 }
 
 - (IBAction)showLegal:(id)sender {
@@ -187,80 +150,20 @@
 - (IBAction)showFAQ:(id)sender {
     [self.faq makeKeyAndOrderFront:self];
 }
+# pragma mark NSUserNotificationCenter Delegate Methods
 
-- (IBAction)reloadPage:(id)sender {
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://web.whatsapp.com"]];
-    [self.webView loadRequest:urlRequest];
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification {
+    return YES;
 }
 
-- (void)setActiveConversationAtIndex:(NSString*)index {
-    [self.webView evaluateJavaScript:
-     [NSString stringWithFormat:@"setActiveConversationAtIndex(%@)", index]
-                   completionHandler:nil];
-}
-
-#pragma mark WebView Delegate Methods
-
-
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
-    NSURL *url = navigationAction.request.URL;
-    
-    if ([url.host hasSuffix:@"whatsapp.com"] || [url.scheme isEqualToString:@"file"]) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-    } else if ([url.host hasSuffix:@"whatsapp.net"]) {
-        decisionHandler(WKNavigationActionPolicyCancel);
-        
-        NSAlert *downloadMediaAlert = [[NSAlert alloc] init];
-        downloadMediaAlert.messageText = @"Downloading Media";
-        downloadMediaAlert.informativeText = @"To download media, please just drag and drop it from this window into Finder.";
-        [downloadMediaAlert addButtonWithTitle:@"OK"];
-        [downloadMediaAlert runModal];
-    } else {
-        decisionHandler(WKNavigationActionPolicyCancel);
-        [[NSWorkspace sharedWorkspace] openURL:url];
-    }
-}
-
-- (void)webView:(WKWebView*)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    NSLog(@"Failed navigation with error: %@", error);
-    [self showFailedConnectionPage];
-}
-
-- (void)webView:(WKWebView*)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    NSLog(@"Failed navigation with error: %@", error);
-    [self showFailedConnectionPage];
-}
-
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
-{
-    
-    if (!navigationAction.targetFrame.isMainFrame) {
-        [[NSWorkspace sharedWorkspace] openURL:navigationAction.request.URL];
-    }
-    
-    return nil;
-}
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
-    NSArray *messageBody = message.body;
-    NSUserNotification *notification = [NSUserNotification new];
-    notification.title = messageBody[0];
-    notification.subtitle = messageBody[1];
-    [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
-}
-
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler {
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Uploading Media";
-    alert.informativeText = message;
-    [alert addButtonWithTitle:@"OK"];
-    [alert runModal];
-    completionHandler();
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification {
+  [self.webViewController openChat:notification.identifier];
+  [center removeDeliveredNotification:notification];
 }
 
 # pragma mark Utils
 - (void)updateWindowTitlebar {
-    const CGFloat kTitlebarHeight = 59;
+    const CGFloat kTitlebarHeight = WAMWindowToolbarHeight;
     const CGFloat kFullScreenButtonYOrigin = 3;
     CGRect windowFrame = _window.frame;
     BOOL fullScreen = (_window.styleMask & NSFullScreenWindowMask) == NSFullScreenWindowMask;
@@ -318,11 +221,5 @@
     window.releasedWhenClosed = YES;
     CFBridgingRetain(window);
     return window;
-}
-
-- (void)showFailedConnectionPage {
-    NSURL *failedPageURL = [[NSBundle mainBundle] URLForResource:@"noConnection" withExtension:@"html"];
-    NSURLRequest *failedPageRequest = [NSURLRequest requestWithURL:failedPageURL];
-    [self.webView loadRequest:failedPageRequest];
 }
 @end

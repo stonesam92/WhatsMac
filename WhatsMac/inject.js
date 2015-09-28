@@ -5,16 +5,16 @@ jQuery(document).on('click', 'input[type="file"]', function () {
 });
 
 this.Notification = function (title, options) {
-    n = [title, options];
-    console.log(options);
-    webkit.messageHandlers.notification.postMessage([title, options.body]);
+    webkit.messageHandlers.notification.postMessage(["WAMNotification", title, options.body, options.tag]);
 };
 this.Notification.permission = 'granted';
 this.Notification.requestPermission = function(callback) {callback('granted');};
 
-
 var styleAdditions = document.createElement('style');
-styleAdditions.textContent = 'div.pane-list-user { opacity:0; } \
+styleAdditions.textContent = 'header { display: none !important; } \
+.image-thumb-lores { -webkit-transform: translate3d(0,0,0); } \
+.avatar-image { -webkit-transform: translate3d(0,0,0); } \
+div.pane-list-user { opacity:0; } \
 div.pane-list-user > div.avatar { width: 0px; height: 0px; } \
 div.app-wrapper::before { opacity: 0; } \
 div.drawer-title { left:60px; bottom:17px; } \
@@ -47,7 +47,19 @@ function activateSearchField () {
 }
 
 function newConversation () {
-    document.querySelector('button.icon-chat').click();
+  var backButton = document.querySelector('button.btn-close-drawer');
+  if( backButton !== null ) {
+    backButton.click();
+    return
+  }
+  
+  var newButton = document.querySelector('button.icon-chat');
+  if( newButton == null ) {
+    // Page is not yet loaded.
+    return
+  }
+  
+    newButton.click();
     document.querySelector('input.input-search').focus();
     
     var header = document.querySelector('div.drawer-title');
@@ -96,6 +108,12 @@ function clickOnItemWithIndex (index, scrollToItem) {
     });
 }
 
+function openChat (rawTag) {
+    var $ = jQuery;
+    var tag = rawTag.replace('.', '=1');
+    $('div.chat[data-reactid*="' + tag + '"]').first().click();
+}
+
 function setActiveConversationAtIndex (index) {
     if (index < 1 || index > 9) {
         return;
@@ -118,8 +136,107 @@ function setActiveConversationAtIndex (index) {
     conversationList.scrollTop = 0;
 }
 
+var injectChangeObserver = new MutationObserver(function(records) {
+    var $ = jQuery;
+      for(var i = 0; i < records.length; i++) {
+          if( records[i].addedNodes.length > 0 ) {
+              for(var j = 0; j < records[i].addedNodes.length; j++) {
+                  if( $(records[i].addedNodes[j]).hasClass('app') ) {
+                    conversationChangeObserver.observe(records[i].addedNodes[j], {
+                      "childList": true
+                    })
+                    webkit.messageHandlers.notification.postMessage(["WAMWebAppLoaded"]);
+                    this.disconnect();
+                    break
+                  }
+              }
+          }
+      }
+});
+
+var conversationChangeObserver = new MutationObserver(function(records) {
+  var $ = jQuery;
+  for(var i = 0; i < records.length; i++) {
+      if( records[i].addedNodes.length > 0 ) {
+          for(var j = 0; j < records[i].addedNodes.length; j++) {
+              if( $(records[i].addedNodes[j]).hasClass('pane-chat') ) {
+                updateConversationDetails(records[i].addedNodes[j]);
+                break
+              }
+          }
+      }
+  }
+});
+
+var chatStatusObserver = new MutationObserver(function(records) {
+  var $ = jQuery;
+  var latest = null;
+  for(var i = 0; i < records.length; i++) {
+      if( records[i].addedNodes.length > 0 ) {
+          for(var j = 0; j < records[i].addedNodes.length; j++) {
+              if( $(records[i].addedNodes[j]).hasClass('chat-status') ) {
+                lastest = records[i].addedNodes[j];
+              }
+          }
+      }
+  }
+  
+  if( latest !== null ) updateConversationStatus(lastest);
+});
+
+var chatStatusObserver2 = new MutationObserver(function(records) {
+  var $ = jQuery;
+  for(var i = 0; i < records.length; i++) {
+      if( records[i].attributeName == "title" ) {
+        updateConversationStatusWithText(records[i].target.title)
+      }
+  }
+});
+
+function updateConversationDetails(_panel) {
+  var $ = jQuery;
+  var panel = $(_panel);
+  
+  var title = panel.find('.chat-title > span.emojitext').first().attr("title");
+  var statusSpan = panel.find('.chat-status > span.emojitext')[0];
+  var statusText = statusSpan.title || "";
+  
+  statusText = statusText.indexOf("click here for") == 0 ? "" : statusText
+
+  chatStatusObserver2.disconnect();
+  chatStatusObserver2.observe(statusSpan, {
+    "attributes": true
+  })
+
+  chatStatusObserver.disconnect();
+  chatStatusObserver.observe(jQuery(_panel).find('div.chat-body')[0], {
+    "childList": true
+  })
+  webkit.messageHandlers.notification.postMessage(["WAMConversationDetails", title, statusText]);
+}
+
+function updateConversationStatus(_status) {
+  chatStatusObserver2.disconnect();
+  chatStatusObserver2.observe(status, {
+    "attributes": true
+  })
+
+  var status = jQuery(_status).find('span.emojitext').first().attr("title");
+
+  webkit.messageHandlers.notification.postMessage(["WAMConversationStatus", status]);
+}
+
+function updateConversationStatusWithText(text) {
+  webkit.messageHandlers.notification.postMessage(["WAMConversationStatus", text]);
+}
+
 jQuery(function () {
     (function ($) {
+     
+     injectChangeObserver.observe($('.app-wrapper')[0], {
+         "childList": true
+    })
+
         $(document).keydown(function (event) {
             if (!CHAT_ITEM_HEIGHT) {
                 CHAT_ITEM_HEIGHT = parseInt($($('.infinite-list-viewport .infinite-list-item')[0]).height());

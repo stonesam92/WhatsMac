@@ -11,7 +11,9 @@ this.Notification.permission = 'granted';
 this.Notification.requestPermission = function(callback) {callback('granted');};
 
 var styleAdditions = document.createElement('style');
-styleAdditions.textContent = 'div.pane-list-user { opacity:0; } \
+styleAdditions.textContent = 'header { display: none !important; } \
+.image-thumb-lores { -webkit-transform: translate3d(0,0,0); } \
+div.pane-list-user { opacity:0; } \
 div.pane-list-user > div.avatar { width: 0px; height: 0px; } \
 div.app-wrapper::before { opacity: 0; } \
 div.drawer-title { left:60px; bottom:17px; } \

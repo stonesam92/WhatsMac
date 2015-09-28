@@ -8,7 +8,7 @@
         if (chars.length == 1) {
             switch ([chars characterAtIndex:0]) {
                 case '1' ... '9':
-                    [((AppDelegate*)self.delegate) setActiveConversationAtIndex:theEvent.characters];
+                    [((AppDelegate*)self.delegate).webViewController setActiveConversationAtIndex:theEvent.characters];
                     return;
                 default:
                     break;

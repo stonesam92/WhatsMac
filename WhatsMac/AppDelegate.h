@@ -6,5 +6,10 @@
 - (BOOL)shouldPropagateMouseUpEvent:(NSEvent*)theEvent;
 - (BOOL)shouldPropagateMouseDraggedEvent:(NSEvent*)theEvent;
 
+- (void)createStatusItem;
+- (void)removeStatusItem;
+
+@property (nonatomic, readonly) NSWindowController *preferencesWindowController;
+
 @end
 

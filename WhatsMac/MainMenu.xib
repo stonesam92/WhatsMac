@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -33,9 +33,14 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="dmJ-G0-0Is"/>
-                            <menuItem title="Reload From Server" keyEquivalent="r" id="365-gz-eEk">
+                            <menuItem title="Preferences" keyEquivalent="," id="365-gz-eEk">
                                 <connections>
-                                    <action selector="reloadPage:" target="dKU-pJ-OAl" id="9jt-lm-BqN"/>
+                                    <action selector="openPreferences:" target="dKU-pJ-OAl" id="KHC-rX-dCK"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Reload From Server" keyEquivalent="r" id="1u3-Kp-Uhw">
+                                <connections>
+                                    <action selector="reloadPage:" target="dKU-pJ-OAl" id="HbT-h6-hd4"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>

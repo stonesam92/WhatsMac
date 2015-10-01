@@ -20,6 +20,11 @@
 		22D3AC7D1B0D57A3005FCA4B /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22D3AC7A1B0D574D005FCA4B /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22D3AC7F1B0D58C3005FCA4B /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */; };
 		22FD6F861B18DE3A001B593D /* jquery.js in Resources */ = {isa = PBXBuildFile; fileRef = 22FD6F851B18DE3A001B593D /* jquery.js */; };
+		852E16331BBD7B290092D27B /* MASPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 852E162B1BBD7B280092D27B /* MASPreferencesWindow.xib */; settings = {ASSET_TAGS = (); }; };
+		852E16341BBD7B290092D27B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 852E162D1BBD7B280092D27B /* Info.plist */; settings = {ASSET_TAGS = (); }; };
+		852E16351BBD7B290092D27B /* MASPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 852E16321BBD7B290092D27B /* MASPreferencesWindowController.m */; settings = {ASSET_TAGS = (); }; };
+		852E16391BBD7C370092D27B /* GeneralPreferencesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 852E16361BBD7C370092D27B /* GeneralPreferencesView.xib */; settings = {ASSET_TAGS = (); }; };
+		852E163A1BBD7C370092D27B /* GeneralPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 852E16381BBD7C370092D27B /* GeneralPreferencesViewController.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,6 +59,16 @@
 		22D3AC7A1B0D574D005FCA4B /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		22FD6F851B18DE3A001B593D /* jquery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.js; sourceTree = "<group>"; };
+		852E162C1BBD7B280092D27B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MASPreferencesWindow.xib; sourceTree = "<group>"; };
+		852E162D1BBD7B280092D27B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		852E162E1BBD7B280092D27B /* MASPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASPreferences.h; sourceTree = "<group>"; };
+		852E162F1BBD7B280092D27B /* MASPreferences.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = MASPreferences.modulemap; sourceTree = "<group>"; };
+		852E16301BBD7B280092D27B /* MASPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASPreferencesViewController.h; sourceTree = "<group>"; };
+		852E16311BBD7B280092D27B /* MASPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASPreferencesWindowController.h; sourceTree = "<group>"; };
+		852E16321BBD7B290092D27B /* MASPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASPreferencesWindowController.m; sourceTree = "<group>"; };
+		852E16361BBD7C370092D27B /* GeneralPreferencesView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GeneralPreferencesView.xib; path = Preferences/GeneralPreferencesView.xib; sourceTree = "<group>"; };
+		852E16371BBD7C370092D27B /* GeneralPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPreferencesViewController.h; path = Preferences/GeneralPreferencesViewController.h; sourceTree = "<group>"; };
+		852E16381BBD7C370092D27B /* GeneralPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralPreferencesViewController.m; path = Preferences/GeneralPreferencesViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +104,7 @@
 		223C31971B07B66500E09138 /* WhatsMac */ = {
 			isa = PBXGroup;
 			children = (
+				85E6D50C1BBD7961002276AD /* Preferences */,
 				22D3AC7E1B0D58C3005FCA4B /* dsa_pub.pem */,
 				2262F0DD1B0A9BD900186F1D /* inject.js */,
 				22FD6F851B18DE3A001B593D /* jquery.js */,
@@ -119,10 +135,35 @@
 		2262F0DA1B09670A00186F1D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				852E162A1BBD7B280092D27B /* MASPreferences */,
 				22D3AC7A1B0D574D005FCA4B /* Sparkle.framework */,
 				2262F0D61B0966F000186F1D /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		852E162A1BBD7B280092D27B /* MASPreferences */ = {
+			isa = PBXGroup;
+			children = (
+				852E162B1BBD7B280092D27B /* MASPreferencesWindow.xib */,
+				852E162D1BBD7B280092D27B /* Info.plist */,
+				852E162E1BBD7B280092D27B /* MASPreferences.h */,
+				852E162F1BBD7B280092D27B /* MASPreferences.modulemap */,
+				852E16301BBD7B280092D27B /* MASPreferencesViewController.h */,
+				852E16311BBD7B280092D27B /* MASPreferencesWindowController.h */,
+				852E16321BBD7B290092D27B /* MASPreferencesWindowController.m */,
+			);
+			path = MASPreferences;
+			sourceTree = "<group>";
+		};
+		85E6D50C1BBD7961002276AD /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				852E16361BBD7C370092D27B /* GeneralPreferencesView.xib */,
+				852E16371BBD7C370092D27B /* GeneralPreferencesViewController.h */,
+				852E16381BBD7C370092D27B /* GeneralPreferencesViewController.m */,
+			);
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,7 +193,7 @@
 		223C318D1B07B66500E09138 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Sam Stone";
 				TargetAttributes = {
 					223C31941B07B66500E09138 = {
@@ -183,12 +224,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				852E16341BBD7B290092D27B /* Info.plist in Resources */,
+				852E16391BBD7C370092D27B /* GeneralPreferencesView.xib in Resources */,
 				223C31A31B07B66500E09138 /* Images.xcassets in Resources */,
 				22D3AC7F1B0D58C3005FCA4B /* dsa_pub.pem in Resources */,
 				223C31BE1B08167D00E09138 /* MainMenu.xib in Resources */,
 				2262F0DE1B0A9BD900186F1D /* inject.js in Resources */,
 				22FD6F861B18DE3A001B593D /* jquery.js in Resources */,
 				226C98E61B0F564100515A14 /* noConnection.html in Resources */,
+				852E16331BBD7B290092D27B /* MASPreferencesWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,14 +243,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				852E163A1BBD7C370092D27B /* GeneralPreferencesViewController.m in Sources */,
 				2262F0E11B0B842F00186F1D /* WAMApplication.m in Sources */,
 				2262F0E41B0BF4C200186F1D /* WAMWebView.m in Sources */,
 				223C319E1B07B66500E09138 /* main.m in Sources */,
+				852E16351BBD7B290092D27B /* MASPreferencesWindowController.m in Sources */,
 				223C319C1B07B66500E09138 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		852E162B1BBD7B280092D27B /* MASPreferencesWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				852E162C1BBD7B280092D27B /* en */,
+			);
+			name = MASPreferencesWindow.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		223C31B31B07B66500E09138 /* Debug */ = {
@@ -230,6 +287,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -301,6 +359,7 @@
 				INFOPLIST_FILE = WhatsMac/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-Wl,-rpath,@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.samstone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -318,6 +377,7 @@
 				INFOPLIST_FILE = WhatsMac/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-Wl,-rpath,@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.samstone.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -1,19 +1,24 @@
 #import "AppDelegate.h"
 #import "WKWebView+Private.h"
 #import "WAMWebView.h"
+#import "MASPreferencesWindowController.h"
+#import "GeneralPreferencesViewController.h"
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
 @import WebKit;
 @import Sparkle;
 
-@interface AppDelegate () <NSWindowDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, NSUserNotificationCenterDelegate>
+@interface AppDelegate () <NSWindowDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, NSUserNotificationCenterDelegate>{
+    NSInteger badgeCount;
+}
 @property (strong, nonatomic) NSWindow *window;
 @property (strong, nonatomic) WKWebView *webView;
 @property (strong, nonatomic) NSView* titlebarView;
 @property (strong, nonatomic) NSStatusItem *statusItem;
 @property (weak, nonatomic) NSWindow *legal;
 @property (weak, nonatomic) NSWindow *faq;
+@property (strong, nonatomic) NSWindowController *preferencesWindowController;
 @property (strong, nonatomic) NSString *notificationCount;
 @property (nonatomic) NSPoint initialDragPosition;
 @property (nonatomic) BOOL isDragging;
@@ -74,7 +79,9 @@
     _titlebarView = [_window standardWindowButton:NSWindowCloseButton].superview;
     [self updateWindowTitlebar];
     
-    [self createStatusItem];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hideStatusBarIcon"]) {
+        [self createStatusItem];
+    }
 
     _webView = [[WAMWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)
                                   configuration:[self webViewConfig]];
@@ -94,6 +101,27 @@
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
     
     [[SUUpdater sharedUpdater] checkForUpdatesInBackground];
+}
+
+- (NSWindowController *)preferencesWindowController
+{
+    if (_preferencesWindowController == nil)
+    {
+        NSViewController *generalViewController = [[GeneralPreferencesViewController alloc] init];
+        NSArray *controllers = [[NSArray alloc] initWithObjects:generalViewController, nil];
+        
+        // To add a flexible space between General and Advanced preference panes insert [NSNull null]:
+        //     NSArray *controllers = [[NSArray alloc] initWithObjects:generalViewController, [NSNull null], advancedViewController, nil];
+        
+        NSString *title = NSLocalizedString(@"Preferences", @"Common title for Preferences window");
+        _preferencesWindowController = [[MASPreferencesWindowController alloc] initWithViewControllers:controllers title:title];
+    }
+    return _preferencesWindowController;
+}
+
+
+- (IBAction)openPreferences:(id)sender {
+    [self.preferencesWindowController showWindow:nil];
 }
 
 - (BOOL)shouldPropagateMouseDraggedEvent:(NSEvent*)theEvent {
@@ -131,8 +159,17 @@
 
 - (void)createStatusItem {
     self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
-    [self.statusItem.button setImage:[NSImage imageNamed:@"statusIconRead"]];
+    if (badgeCount) {
+        [self.statusItem.button setImage:[NSImage imageNamed:@"statusIconUnread"]];
+    }
+    else {
+        [self.statusItem.button setImage:[NSImage imageNamed:@"statusIconRead"]];
+    }
     self.statusItem.action = @selector(showAppWindow:);
+}
+
+- (void)removeStatusItem {
+    [[NSStatusBar systemStatusBar] removeStatusItem: self.statusItem];
 }
 
 - (void)showAppWindow:(id)sender {
@@ -193,7 +230,7 @@
     if (![_notificationCount isEqualToString:notificationCount]) {
         [[NSApp dockTile] setBadgeLabel:notificationCount];
         
-        NSInteger badgeCount = notificationCount.integerValue;
+        badgeCount = notificationCount.intValue;
         
         if (badgeCount) {
             [self.statusItem.button setImage:[NSImage imageNamed:@"statusIconUnread"]];

@@ -7,16 +7,19 @@
 @import WebKit;
 @import Sparkle;
 
+NSString* const _AppleActionOnDoubleClickKey = @"AppleActionOnDoubleClick";
+NSString* const _AppleActionOnDoubleClickNotification = @"AppleNoRedisplayAppearancePreferenceChanged";
+
 @interface AppDelegate () <NSWindowDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, NSUserNotificationCenterDelegate>
 @property (strong, nonatomic) NSWindow *window;
 @property (strong, nonatomic) WKWebView *webView;
-@property (strong, nonatomic) NSView* titlebarView;
 @property (strong, nonatomic) NSStatusItem *statusItem;
 @property (weak, nonatomic) NSWindow *legal;
 @property (weak, nonatomic) NSWindow *faq;
 @property (strong, nonatomic) NSString *notificationCount;
 @property (nonatomic) NSPoint initialDragPosition;
 @property (nonatomic) BOOL isDragging;
+@property (nonatomic) BOOL doubleClickShouldMinimize;
 @end
 
 @implementation AppDelegate
@@ -71,10 +74,12 @@
     _window.frameAutosaveName = @"main";
     _window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
   
-    _titlebarView = [_window standardWindowButton:NSWindowCloseButton].superview;
-    [self updateWindowTitlebar];
+    [self updateTitlebarOfWindow:_window forFullScreen:NO];
     
     [self createStatusItem];
+  
+    [self doubleClickPreferenceDidChange:nil];
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(doubleClickPreferenceDidChange:) name:_AppleActionOnDoubleClickNotification object:nil];
 
     _webView = [[WAMWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)
                                   configuration:[self webViewConfig]];
@@ -126,7 +131,22 @@
     return NO;
   }
   
+    if( theEvent.locationInWindow.y >= (_window.frame.size.height - 59) ) {
+      if( theEvent.clickCount == 2 ) {
+        if( _doubleClickShouldMinimize ) {
+          [_window miniaturize:self];
+        } else {
+          [_window zoom:self];
+        }
+        return NO;
+      }
+    }
+  
   return YES;
+}
+
+- (void)doubleClickPreferenceDidChange:(NSNotification*)notification {
+    _doubleClickShouldMinimize = [[[NSUserDefaults standardUserDefaults] stringForKey: _AppleActionOnDoubleClickKey] isEqualToString:@"Minimize"] ? YES : NO;
 }
 
 - (void)createStatusItem {
@@ -153,8 +173,16 @@
     return YES;
 }
 
+- (void)windowWillEnterFullScreen:(NSNotification *)notification {
+  [self updateTitlebarOfWindow:_window forFullScreen:YES];
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification {
+  [self updateTitlebarOfWindow:_window forFullScreen:NO];
+}
+
 - (void)windowDidResize:(NSNotification *)notification {
-    [self updateWindowTitlebar];
+    [self updateTitlebarOfWindow:_window forFullScreen:NO];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -311,14 +339,13 @@
 }
 
 # pragma mark Utils
-- (void)updateWindowTitlebar {
+- (void)updateTitlebarOfWindow:(NSWindow*)window forFullScreen:(BOOL)fullScreen {
     const CGFloat kTitlebarHeight = 59;
     const CGFloat kFullScreenButtonYOrigin = 3;
-    CGRect windowFrame = _window.frame;
-    BOOL fullScreen = (_window.styleMask & NSFullScreenWindowMask) == NSFullScreenWindowMask;
-    
+    CGRect windowFrame = window.frame;
+  
     // Set size of titlebar container
-    NSView *titlebarContainerView = _titlebarView.superview;
+  NSView *titlebarContainerView = [window standardWindowButton:NSWindowCloseButton].superview.superview;
     CGRect titlebarContainerFrame = titlebarContainerView.frame;
     titlebarContainerFrame.origin.y = windowFrame.size.height - kTitlebarHeight;
     titlebarContainerFrame.size.height = kTitlebarHeight;
@@ -326,9 +353,9 @@
     
     // Set position of window buttons
     CGFloat buttonX = 12; // initial LHS margin, matching Safari 8.0 on OS X 10.10.
-    NSView *closeButton = [self.window standardWindowButton:NSWindowCloseButton];
-    NSView *minimizeButton = [self.window standardWindowButton:NSWindowMiniaturizeButton];
-    NSView *zoomButton = [self.window standardWindowButton:NSWindowZoomButton];
+    NSView *closeButton = [window standardWindowButton:NSWindowCloseButton];
+    NSView *minimizeButton = [window standardWindowButton:NSWindowMiniaturizeButton];
+    NSView *zoomButton = [window standardWindowButton:NSWindowZoomButton];
     for (NSView *buttonView in @[closeButton, minimizeButton, zoomButton]){
         CGRect buttonFrame = buttonView.frame;
         

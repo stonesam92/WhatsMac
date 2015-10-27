@@ -178,7 +178,7 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
     }
 }
 
-- (void)showAppWindow:(id)sender {
+- (IBAction)showAppWindow:(id)sender {
     if (![self.window isVisible]) {
         [self.window makeKeyAndOrderFront:nil];
     }

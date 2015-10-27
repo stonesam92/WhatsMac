@@ -30,12 +30,6 @@
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Hide Status Item" id="rhL-VI-tpz">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleStatusItem:" target="dKU-pJ-OAl" id="5Rb-bX-Jxw"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Check For Updates..." id="DqK-XA-zln">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -314,6 +308,13 @@
                         <items>
                             <menuItem title="Zoom In" keyEquivalent="+" id="snW-S8-Cw5"/>
                             <menuItem title="Zoom Out" keyEquivalent="-" id="1UK-8n-QPP"/>
+                            <menuItem isSeparatorItem="YES" id="Fai-Hq-7jX"/>
+                            <menuItem title="Hide Status Item" id="rhL-VI-tpz">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleStatusItem:" target="dKU-pJ-OAl" id="5Rb-bX-Jxw"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

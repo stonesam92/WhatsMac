@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9052" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9527.1" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9052"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9527.1"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -13,6 +13,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="dKU-pJ-OAl" customClass="AppDelegate">
             <connections>
+                <outlet property="soundMenu" destination="UMb-5V-CfS" id="6JM-4t-kDV"/>
                 <outlet property="statusItemToggle" destination="rhL-VI-tpz" id="tFQ-eD-I3F"/>
             </connections>
         </customObject>
@@ -35,6 +36,20 @@
                                 <connections>
                                     <action selector="toggleStatusItem:" target="dKU-pJ-OAl" id="5Rb-bX-Jxw"/>
                                 </connections>
+                            </menuItem>
+                            <menuItem title="Notification Sound" id="Qnf-pw-VJw">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Notification Sound" id="UMb-5V-CfS">
+                                    <items>
+                                        <menuItem title="Disable" tag="-2" id="LfA-lp-bhO">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="k0q-de-B2L"/>
+                                        <menuItem title="Default" tag="-1" id="oiA-uW-8Mc">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Check For Updates..." id="DqK-XA-zln">
                                 <modifierMask key="keyEquivalentModifierMask"/>

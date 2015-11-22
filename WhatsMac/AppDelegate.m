@@ -10,6 +10,7 @@
 NSString *const _AppleActionOnDoubleClickKey = @"AppleActionOnDoubleClick";
 NSString *const _AppleActionOnDoubleClickNotification = @"AppleNoRedisplayAppearancePreferenceChanged";
 NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
+NSString* const WAMNotificationSound = @"WAMNotificationSound";
 
 @interface AppDelegate () <NSWindowDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, NSUserNotificationCenterDelegate>
 @property (strong, nonatomic) NSWindow *window;
@@ -22,6 +23,9 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
 @property (nonatomic) NSPoint initialDragPosition;
 @property (nonatomic) BOOL isDragging;
 @property (nonatomic) BOOL doubleClickShouldMinimize;
+@property (strong, nonatomic) NSString *soundName;
+@property (weak) IBOutlet NSMenu *soundMenu;
+@property (weak) NSMenuItem *currentSoundMenuItem;
 @end
 
 @implementation AppDelegate
@@ -82,12 +86,47 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(doubleClickPreferenceDidChange:) name:_AppleActionOnDoubleClickNotification object:nil];
   
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    [defaults registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:WAMShouldHideStatusItem]];
+    [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:NO], WAMShouldHideStatusItem, @"@nil", WAMNotificationSound, nil]];
+
     if (![defaults boolForKey:WAMShouldHideStatusItem]) {
       [self createStatusItem];
     } else {
       [self.statusItemToggle setTitle:@"Show Status Icon"];
     }
+  
+    NSArray<NSString *>* systemSounds = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/System/Library/Sounds/" error:nil];
+    [systemSounds enumerateObjectsUsingBlock:^(NSString* name, NSUInteger index, BOOL* stop) {
+      NSString* soundName = [name substringToIndex:[name rangeOfString:@"."].location];
+      [_soundMenu addItem:[[NSMenuItem alloc] initWithTitle:soundName action:nil keyEquivalent:@""]];
+    }];
+  
+    NSString* sound = [defaults stringForKey:WAMNotificationSound];
+    [self updateNotificationSound:sound];
+  
+    [_soundMenu.itemArray enumerateObjectsUsingBlock:^(NSMenuItem* item, NSUInteger index, BOOL* stop) {
+      [item setTarget:self];
+      [item setAction:@selector(handleNotificationSoundMenuClick:)];
+      
+      BOOL selected = false;
+      switch (item.tag) {
+        case -2:
+          if ([sound isEqualToString:@"@nil"])
+            selected = true;
+          break;
+        case -1:
+          if ([sound isEqualToString:@"@default"])
+            selected = true;
+          break;
+        default:
+          if ([sound isEqualToString:item.title])
+            selected = true;
+      }
+      
+      if (selected) {
+        [item setState:NSOnState];
+        _currentSoundMenuItem = item;
+      }
+    }];
 
     _webView = [[WAMWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)
                                   configuration:[self webViewConfig]];
@@ -260,6 +299,31 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
     _notificationCount = notificationCount;
 }
 
+- (void)updateNotificationSound:(NSString*)sound {
+    if ([sound isEqualToString:@"@default"])
+        _soundName = NSUserNotificationDefaultSoundName;
+    else if ([sound isEqualToString:@"@nil"])
+        _soundName = nil;
+    else
+        _soundName = sound;
+}
+
+- (void)handleNotificationSoundMenuClick:(NSMenuItem*)menuItem {
+    [_currentSoundMenuItem setState:NSOffState];
+    _currentSoundMenuItem = menuItem;
+    [menuItem setState:NSOnState];
+    
+    NSString* sound;
+    switch (menuItem.tag) {
+        case -1: sound = @"@default"; break;
+        case -2: sound = @"@nil"; break;
+        default: sound = menuItem.title;
+    }
+    
+    [self updateNotificationSound:sound];
+    [[NSUserDefaults standardUserDefaults] setObject:sound forKey:WAMNotificationSound];
+}
+
 #pragma mark MenuBar Actions
 - (IBAction)find:(NSMenuItem*)sender {
     [self.webView evaluateJavaScript:@"activateSearchField();"
@@ -341,6 +405,7 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
     notification.title = messageBody[0];
     notification.subtitle = messageBody[1];
     notification.identifier = messageBody[2];
+    notification.soundName = _soundName;
     [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
 }
 

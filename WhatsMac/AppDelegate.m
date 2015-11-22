@@ -321,6 +321,10 @@ NSString* const WAMNotificationSound = @"WAMNotificationSound";
     }
     
     [self updateNotificationSound:sound];
+
+    if (_soundName != nil && ![_soundName isEqualToString:NSUserNotificationDefaultSoundName])
+      [[NSSound soundNamed:_soundName] play];
+
     [[NSUserDefaults standardUserDefaults] setObject:sound forKey:WAMNotificationSound];
 }
 

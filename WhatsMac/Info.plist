@@ -37,6 +37,8 @@
 	<string>WAMApplication</string>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/stonesam92/ChitChat/master/update_appcast.xml</string>
+	<key>LSUIElement</key>
+	<true/>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 </dict>

@@ -102,7 +102,16 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
   
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://web.whatsapp.com"]];
     [_webView loadRequest:urlRequest];
-    [_window makeKeyAndOrderFront:self];
+  
+    // show dock icon if status bar item is hidden
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:WAMShouldHideStatusItem]) {
+      [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+      [_window makeKeyAndOrderFront:self];
+      [self showAppWindow:nil];
+    }
+    else {
+      [self hideAppWindow:nil];
+    }
 
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
     
@@ -179,7 +188,19 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
 }
 
 - (void)showAppWindow:(id)sender {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:WAMShouldHideStatusItem]) {
+      [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    }
     [NSApp activateIgnoringOtherApps:YES];
+}
+
+- (void)hideAppWindow:(id)sender {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:WAMShouldHideStatusItem]) {
+      [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
+    }
+    else {
+      [NSApp terminate:self];
+    }
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
@@ -379,10 +400,10 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
     
     // Set position of window buttons
     CGFloat buttonX = 12; // initial LHS margin, matching Safari 8.0 on OS X 10.10.
-    NSView *closeButton = [window standardWindowButton:NSWindowCloseButton];
-    NSView *minimizeButton = [window standardWindowButton:NSWindowMiniaturizeButton];
-    NSView *zoomButton = [window standardWindowButton:NSWindowZoomButton];
-    for (NSView *buttonView in @[closeButton, minimizeButton, zoomButton]){
+    NSButton *closeButton = [window standardWindowButton:NSWindowCloseButton];
+    NSButton *minimizeButton = [window standardWindowButton:NSWindowMiniaturizeButton];
+    NSButton *zoomButton = [window standardWindowButton:NSWindowZoomButton];
+    for (NSButton *buttonView in @[closeButton, minimizeButton, zoomButton]){
         CGRect buttonFrame = buttonView.frame;
         
         // in fullscreen, the titlebar frame is not governed by kTitlebarHeight but rather appears to be fixed by the system.
@@ -398,7 +419,9 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
         
         [buttonView setFrameOrigin:buttonFrame.origin];
     };
-    
+  
+    [closeButton setAction:@selector(hideAppWindow:)];
+    [closeButton setTarget:self];
 }
 
 - (NSWindow*)createWindow:(NSString*)identifier title:(NSString*)title URL:(NSString*)url {

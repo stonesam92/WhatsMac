@@ -374,6 +374,7 @@ NSString* const WAMShouldHideStatusItem = @"WAMShouldHideStatusItem";
      [NSString stringWithFormat:@"openChat(\"%@\")", notification.identifier]
         completionHandler:nil];
     [center removeDeliveredNotification:notification];
+    [self showAppWindow:nil];
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {

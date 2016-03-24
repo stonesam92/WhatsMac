@@ -92,7 +92,7 @@ function clickOnItemWithIndex (index, scrollToItem) {
         var $this = $(this);
         if (indexOfListItem($this) === index) {
                 var desiredItem = $this.get(0);
-                desiredItem.firstChild.click();
+                desiredItem.firstChild.firstChild.click();
                 if (scrollToItem) {
 					$scrollView = $('.pane-list-body');
 					$desiredItem = $(desiredItem);

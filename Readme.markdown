@@ -1,4 +1,4 @@
-#ChitChat (formerly WhatsMac)
+# ChitChat (formerly WhatsMac)
 
 A Mac app wrapper around WhatsApp's web client, [WhatsApp Web](https://web.whatsapp.com). 
 
@@ -21,7 +21,7 @@ Allows you to receive notification center notifications for new messages, and ad
 
 Inspired by, and in small part based on, [Messenger for Mac](http://fbmacmessenger.rsms.me/), created by [Rasmus Andersson](https://twitter.com/rsms). ChitChat uses some code from this project.
 
-##Feature Support
+## Feature Support
 
 Most features of WhatsApp Web are currently supported, and support for the remainder is being actively developed:
 
@@ -36,7 +36,7 @@ Most features of WhatsApp Web are currently supported, and support for the remai
 
 \*Media uploading **is** supported when dragging the image/video file into the app's window. Uploading using the upload button is currently not supported, since WKWebView provides no easy mechanism for using `<input type="file">` tags.
 
-##License
+## License
   
   
 Copyright (c) 2015 Authors of the source code of this project
@@ -47,7 +47,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-##Note
+## Note
 
 This project does **not** attempt to reverse engineer the WhatsApp API or attempt to reimplement any part of the WhatsApp client's communications with the WhatsApp servers. 
 
